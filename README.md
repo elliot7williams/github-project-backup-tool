@@ -1,33 +1,52 @@
-# GitHub Project Backup Tool
+# GitHub Project Backup
 
-PowerShell tool for scanning external drives for source-code projects and backing them up to private GitHub repositories.
+Scan external drives for source-code projects and back them up to private GitHub repositories.
 
-It is designed for the workflow we used here:
+This is a Windows-first backup utility for messy project/archive drives. It can run as a small GUI app or as a PowerShell script.
 
-- Find project roots from markers like `package.json`, `Package.swift`, `.xcodeproj`, `.csproj`, `.sln`, `.pde`, `.ino`, `pubspec.yaml`, and Gradle files.
-- Skip obvious noise such as build folders, packaged app exports, game libraries, installed tool examples, `node_modules`, `DerivedData`, `bin`, `obj`, and staging folders.
-- Stage clean copies under `H:\CodexUploadStaging\auto-project-backups` by default.
-- Create private GitHub repositories with `gh repo create`.
-- Block upload if suspicious files are still tracked, such as signing keys, Firebase mobile configs, local properties, installers, archives, build outputs, package outputs, or large media/runtime files.
-- Write a CSV report.
+## What It Does
 
-## Requirements
+- Finds project roots from markers like `package.json`, `Package.swift`, `.xcodeproj`, `.csproj`, `.sln`, `.pde`, `.ino`, `pubspec.yaml`, and Gradle files.
+- Skips common noise such as build folders, packaged app exports, game libraries, installed tool examples, `node_modules`, `DerivedData`, `bin`, `obj`, and staging folders.
+- Stages clean copies before upload, leaving original external-drive files untouched.
+- Creates private GitHub repositories with GitHub CLI.
+- Blocks upload if suspicious files are still tracked, such as signing keys, Firebase mobile configs, local properties, installers, archives, build outputs, package outputs, or large media/runtime files.
+- Writes a CSV report for review.
 
-- Windows PowerShell or PowerShell 7
-- Git
-- GitHub CLI (`gh`) authenticated to your GitHub account
-- .NET 8 Desktop Runtime for the GUI EXE, unless you run the `.ps1` script directly
-- `rg` / ripgrep is recommended for faster scans, but the script has a slower fallback
+## Quick Start
 
-Check auth:
+1. Install Git and GitHub CLI.
+2. Authenticate GitHub CLI:
 
 ```powershell
+gh auth login
 gh auth status
 ```
 
+3. Run a scan-only pass first:
+
+```powershell
+.\Backup-GitHubProjects.ps1 -Roots I:\,J:\ -Owner YOUR_GITHUB_USERNAME -ReportPath .\scan-report.csv
+```
+
+4. Review the CSV report.
+5. Upload private repos:
+
+```powershell
+.\Backup-GitHubProjects.ps1 -Roots I:\,J:\ -Owner YOUR_GITHUB_USERNAME -Upload -ReportPath .\upload-report.csv
+```
+
+## Requirements
+
+- Windows PowerShell or PowerShell 7.
+- Git.
+- GitHub CLI (`gh`) authenticated to your GitHub account.
+- .NET 8 Desktop Runtime for the GUI EXE. You do not need it if you run the `.ps1` script directly.
+- `rg` / ripgrep is recommended for faster scans. The script has a slower fallback.
+
 ## GUI EXE
 
-The Windows app bundle is in `dist/`:
+The Windows app bundle lives in `dist/`:
 
 ```text
 dist/GitHubProjectBackup.exe
@@ -44,13 +63,13 @@ Keep `Backup-GitHubProjects.ps1` next to the EXE. The GUI launches that script s
 This is the safest first pass. It does not upload anything.
 
 ```powershell
-.\Backup-GitHubProjects.ps1 -Roots I:\,J:\ -Owner elliot7williams -ReportPath .\scan-report.csv
+.\Backup-GitHubProjects.ps1 -Roots I:\,J:\ -Owner YOUR_GITHUB_USERNAME -ReportPath .\scan-report.csv
 ```
 
 If you omit `-Roots`, the tool scans ready removable/fixed drives except `C:\` and `D:\`.
 
 ```powershell
-.\Backup-GitHubProjects.ps1 -Owner elliot7williams
+.\Backup-GitHubProjects.ps1 -Owner YOUR_GITHUB_USERNAME
 ```
 
 ## Upload
@@ -58,7 +77,7 @@ If you omit `-Roots`, the tool scans ready removable/fixed drives except `C:\` a
 Creates private repos for candidates whose repo slug does not already exist.
 
 ```powershell
-.\Backup-GitHubProjects.ps1 -Roots I:\,J:\ -Owner elliot7williams -Upload -ReportPath .\upload-report.csv
+.\Backup-GitHubProjects.ps1 -Roots I:\,J:\ -Owner YOUR_GITHUB_USERNAME -Upload -ReportPath .\upload-report.csv
 ```
 
 ## Suspicious File Blocking
@@ -76,7 +95,7 @@ By default, upload is blocked if the staged Git index contains files matching ri
 You can override this, but use it sparingly:
 
 ```powershell
-.\Backup-GitHubProjects.ps1 -Roots I:\ -Owner elliot7williams -Upload -AllowSuspiciousFiles
+.\Backup-GitHubProjects.ps1 -Roots I:\ -Owner YOUR_GITHUB_USERNAME -Upload -AllowSuspiciousFiles
 ```
 
 ## Include Third-Party Downloads
@@ -84,7 +103,7 @@ You can override this, but use it sparingly:
 The tool skips paths that look like bundled examples, game libraries, or third-party downloads. To include them:
 
 ```powershell
-.\Backup-GitHubProjects.ps1 -Roots J:\ -Owner elliot7williams -IncludeThirdParty
+.\Backup-GitHubProjects.ps1 -Roots J:\ -Owner YOUR_GITHUB_USERNAME -IncludeThirdParty
 ```
 
 ## Output
@@ -111,6 +130,11 @@ Common statuses:
 
 ## Notes
 
-The tool stages clean copies first. It does not modify original files on the external drives.
+- The tool stages clean copies first. It does not modify original files on the external drives.
+- Uploads are private by default.
+- Always run scan-only first and review the report before uploading.
+- Repo names are generated from folder names. If two folders would produce the same slug, upload the first and rename the second manually or move it into a uniquely named folder before rerunning.
 
-Repo names are generated from folder names. If two folders would produce the same slug, upload the first and rename the second manually or move it into a uniquely named folder before rerunning.
+## License
+
+No license has been added yet. If you plan to accept contributions or want others to reuse the code, add an open-source license such as MIT.
