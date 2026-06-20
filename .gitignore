@@ -9,3 +9,4 @@ src/**/obj/
 project-backup-report.csv
 scan-report.csv
 upload-report.csv
+release/

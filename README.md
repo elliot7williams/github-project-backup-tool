@@ -2,7 +2,7 @@
 
 Scan external drives for source-code projects and back them up to private GitHub repositories.
 
-This is a Windows-first backup utility for messy project/archive drives. It can run as a small GUI app or as a PowerShell script.
+This is a cross-platform backup utility for messy project/archive drives. It includes a Windows GUI/PowerShell version and a native macOS SwiftUI/Xcode project.
 
 ## What It Does
 
@@ -38,11 +38,21 @@ gh auth status
 
 ## Requirements
 
+### Windows
+
 - Windows PowerShell or PowerShell 7.
 - Git.
 - GitHub CLI (`gh`) authenticated to your GitHub account.
 - .NET 8 Desktop Runtime for the GUI EXE. You do not need it if you run the `.ps1` script directly.
 - `rg` / ripgrep is recommended for faster scans. The script has a slower fallback.
+
+### macOS
+
+- macOS 14 or newer.
+- Xcode 15 or newer.
+- Git.
+- GitHub CLI (`gh`) authenticated to your GitHub account.
+- `rg` / ripgrep is recommended for faster scans. The shell backend has a slower fallback.
 
 ## GUI EXE
 
@@ -57,6 +67,17 @@ dist/github-project-backup-icon.ico
 Run `GitHubProjectBackup.exe`, choose roots such as `I:\,J:\`, then run a scan-only pass first. Check `Upload private repos` when you want the tool to create private GitHub repositories.
 
 Keep `Backup-GitHubProjects.ps1` next to the EXE. The GUI launches that script so the scanning and upload behavior stays shared between the command-line and app versions.
+
+## macOS SwiftUI App
+
+The full Xcode project lives in `macos/GitHubProjectBackupMac/`:
+
+```text
+macos/GitHubProjectBackupMac/GitHubProjectBackupMac.xcodeproj
+macos/GitHubProjectBackupMac/GitHubProjectBackupMac/Resources/backup-github-projects-mac.sh
+```
+
+Open the `.xcodeproj` in Xcode, select the `GitHubProjectBackupMac` scheme, and run it. The app provides folder pickers, scan/upload toggles, live logs, and CSV report output while using the bundled zsh backend for the actual scanning and GitHub CLI upload work.
 
 ## Scan Only
 
