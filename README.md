@@ -16,6 +16,7 @@ It is designed for the workflow we used here:
 - Windows PowerShell or PowerShell 7
 - Git
 - GitHub CLI (`gh`) authenticated to your GitHub account
+- .NET 8 Desktop Runtime for the GUI EXE, unless you run the `.ps1` script directly
 - `rg` / ripgrep is recommended for faster scans, but the script has a slower fallback
 
 Check auth:
@@ -23,6 +24,20 @@ Check auth:
 ```powershell
 gh auth status
 ```
+
+## GUI EXE
+
+The Windows app bundle is in `dist/`:
+
+```text
+dist/GitHubProjectBackup.exe
+dist/Backup-GitHubProjects.ps1
+dist/github-project-backup-icon.ico
+```
+
+Run `GitHubProjectBackup.exe`, choose roots such as `I:\,J:\`, then run a scan-only pass first. Check `Upload private repos` when you want the tool to create private GitHub repositories.
+
+Keep `Backup-GitHubProjects.ps1` next to the EXE. The GUI launches that script so the scanning and upload behavior stays shared between the command-line and app versions.
 
 ## Scan Only
 

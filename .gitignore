@@ -1,0 +1,11 @@
+.dotnet-home/
+bin/
+obj/
+src/**/bin/
+src/**/obj/
+*.user
+*.pdb
+*.log
+project-backup-report.csv
+scan-report.csv
+upload-report.csv
